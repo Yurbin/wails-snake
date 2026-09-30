@@ -1,0 +1,13 @@
+# 构建产物
+build/bin/
+dist-portable/
+*.tar.gz
+*.tar.gz.sha256
+
+# 本地运行时数据
+*.log
+
+# IDE
+.idea/
+.vscode/
+.DS_Store

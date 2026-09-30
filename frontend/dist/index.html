@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>贪吃蛇</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="title">
+      <span class="logo">🐍</span>
+      <div class="title-text">
+        <h1>贪吃蛇</h1>
+        <span id="hud-difficulty" class="badge">中级 · 撞墙</span>
+      </div>
+    </div>
+    <div class="scores">
+      <div class="score-block"><span class="label">分数</span><span id="hud-score" class="value">0</span></div>
+      <div class="score-block"><span class="label">最高</span><span id="hud-best" class="value">0</span></div>
+      <div class="score-block"><span class="label">速度</span><span id="hud-speed" class="value">1</span></div>
+    </div>
+  </header>
+
+  <main id="stage">
+    <div class="canvas-wrap">
+      <canvas id="board" width="400" height="400"></canvas>
+
+      <div id="overlay" class="overlay">
+        <!-- 菜单态 -->
+        <div id="panel-menu" class="panel">
+          <h2>开始游戏</h2>
+          <div class="field">
+            <span class="field-label">难度</span>
+            <div class="seg" id="seg-difficulty">
+              <button type="button" data-value="easy">初级</button>
+              <button type="button" data-value="normal" class="active">中级</button>
+              <button type="button" data-value="hard">高级</button>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label">模式</span>
+            <div class="seg" id="seg-wrap">
+              <button type="button" data-value="wall" class="active">撞墙</button>
+              <button type="button" data-value="wrap">穿墙</button>
+            </div>
+          </div>
+          <button id="btn-start" class="primary" type="button">开始游戏 (Enter)</button>
+          <div class="quick-links">
+            <button id="btn-theme" class="ghost" type="button">🎨 主题 · <span id="theme-name">经典</span></button>
+            <button id="btn-sound" class="ghost" type="button">🔊 音效 · 开</button>
+          </div>
+        </div>
+
+        <!-- 暂停态 -->
+        <div id="panel-pause" class="panel hidden">
+          <h2>已暂停</h2>
+          <p class="tip">当前 <span id="pause-score">0</span> 分 · 按 空格 继续</p>
+          <button id="btn-resume" class="primary" type="button">继续</button>
+          <button id="btn-quit" class="ghost" type="button">返回菜单</button>
+        </div>
+
+        <!-- 结束态 -->
+        <div id="panel-over" class="panel hidden">
+          <h2>游戏结束</h2>
+          <p id="over-detail" class="tip">本局 0 分 · 最高 0 分</p>
+          <p id="over-record" class="record hidden">🏆 新纪录!</p>
+          <button id="btn-retry" class="primary" type="button">再来一局 (Enter)</button>
+          <button id="btn-menu" class="ghost" type="button">返回菜单</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span class="hint">方向键 / WASD 移动 · 空格 暂停</span>
+    <span id="ver" class="version">v0.1.0</span>
+  </footer>
+</div>
+<script src="js/theme.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

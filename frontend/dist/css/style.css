@@ -1,0 +1,202 @@
+/* ============ 主题变量(UI 部分;画布配色在 theme.js) ============ */
+:root,
+[data-theme="classic"] {
+  --bg: #10141c;
+  --panel: rgba(22, 28, 40, 0.92);
+  --border: rgba(255, 255, 255, 0.10);
+  --text: #e8ecf3;
+  --muted: #8b94a7;
+  --accent: #3fa55a;
+  --accent-soft: rgba(63, 165, 90, 0.18);
+  --danger: #ff6b6b;
+}
+[data-theme="night"] {
+  --bg: #14161d;
+  --panel: rgba(28, 31, 42, 0.92);
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #dfe3ee;
+  --muted: #7f8698;
+  --accent: #6c7bff;
+  --accent-soft: rgba(108, 123, 255, 0.18);
+  --danger: #ff7a90;
+}
+[data-theme="neon"] {
+  --bg: #0b0e14;
+  --panel: rgba(16, 21, 33, 0.92);
+  --border: rgba(0, 245, 212, 0.25);
+  --text: #e9fbff;
+  --muted: #6fa8b8;
+  --accent: #00f5d4;
+  --accent-soft: rgba(0, 245, 212, 0.15);
+  --danger: #f72585;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans CJK SC", "Source Han Sans SC", "PingFang SC",
+    "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px 10px;
+  gap: 10px;
+}
+
+/* ============ 顶栏 ============ */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title { display: flex; align-items: center; gap: 10px; }
+.logo { font-size: 30px; line-height: 1; }
+.title-text h1 { font-size: 19px; font-weight: 700; letter-spacing: 1px; }
+
+.badge {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 9px;
+}
+
+.scores { display: flex; gap: 14px; }
+
+.score-block { text-align: center; min-width: 44px; }
+.score-block .label {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+.score-block .value {
+  display: block;
+  font-size: 19px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+#hud-best.value { color: var(--accent); }
+
+/* ============ 游戏区 ============ */
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas-wrap { position: relative; }
+
+canvas#board {
+  display: block;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+/* ============ 覆盖层 / 面板 ============ */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 10, 16, 0.55);
+  border-radius: 10px;
+}
+.overlay.hidden { display: none; }
+
+.panel {
+  width: 300px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+.panel.hidden { display: none; }
+
+.panel h2 { font-size: 18px; margin-bottom: 14px; letter-spacing: 1px; }
+.panel .tip { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.panel .record { color: #ffd166; font-size: 13px; margin: -8px 0 12px; }
+.panel .record.hidden { display: none; }
+
+.field { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.field-label { font-size: 13px; color: var(--muted); }
+
+.seg { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.seg button + button { border-left: 1px solid var(--border); }
+.seg button.active {
+  background: var(--accent-soft);
+  color: var(--text);
+  font-weight: 600;
+}
+
+button.primary {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 9px 0;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.primary:active { filter: brightness(0.88); }
+
+button.ghost {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px 0;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+button.ghost:hover { color: var(--text); }
+
+.quick-links { display: flex; gap: 8px; margin-top: 14px; }
+.quick-links button { width: auto; flex: 1; margin-top: 0; }
+
+/* ============ 底栏 ============ */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted);
+}
+.version { opacity: 0.7; }
