@@ -28,7 +28,7 @@ jobs:
         run: |
           VERSION="${{ steps.ver.outputs.version }}"
           docker run --rm -v "$PWD":/src -w /src \
-            -e GO_VERSION -e WAILS_VERSION -e VERSION \
+            -e GO_VERSION -e WAILS_VERSION -e VERSION="$VERSION" \
             ubuntu:20.04 bash -euxc '
               apt-get update
               DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
