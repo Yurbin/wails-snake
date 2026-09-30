@@ -7,7 +7,7 @@
 # ============================================================
 set -eu
 
-VERSION="${1:?用法: build-deb.sh <版本号>}"
+VERSION_REQ="${1:?用法: build-deb.sh <版本号>}"
 if [ ! -f build/bin/snake-game ]; then
   echo "缺少 build/bin/snake-game,请先执行 wails build" >&2
   exit 1
@@ -17,8 +17,15 @@ if [ ! -f build/appicon.png ]; then
   exit 1
 fi
 
+# deb 的 Version 字段必须以数字开头;非数字版本号(如 CI 的 "ci")
+# 归一化为 0.0.0+<原名>,仅写入 control,产物文件名仍用原始版本号
+case "$VERSION_REQ" in
+  [0-9]*) VERSION="$VERSION_REQ" ;;
+  *)      VERSION="0.0.0+${VERSION_REQ}" ;;
+esac
+
 PKGROOT="dist-deb/wails-snake"
-OUT="wails-snake_${VERSION}_amd64.deb"
+OUT="wails-snake_${VERSION_REQ}_amd64.deb"
 rm -rf "$PKGROOT"
 mkdir -p "$PKGROOT/DEBIAN" \
          "$PKGROOT/opt/wails-snake" \
