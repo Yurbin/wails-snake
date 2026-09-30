@@ -22,6 +22,10 @@
 彻底删除 = 卸载菜单项后,手动删除程序目录;
 最高分记录在 ~/.config/wails-snake/(可一并删除)。
 
+注:若本机用 deb 安装包(sudo apt install ./wails-snake_*.deb)
+安装过系统级版本,程序会检测到并跳过用户级菜单集成,
+此时请统一用 "sudo apt remove wails-snake" 卸载。
+
 三、依赖说明
 ----------
 程序依赖系统图形库(麒麟 V10 SP1 桌面版软件源内均有):

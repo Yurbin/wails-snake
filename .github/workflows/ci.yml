@@ -34,6 +34,7 @@ jobs:
               go install "github.com/wailsapp/wails/v2/cmd/wails@${WAILS_VERSION}"
               go test ./...
               wails build -platform linux/amd64 -ldflags "-s -w -X main.version=ci"
+              ./scripts/build-deb.sh ci
             '
 
       - name: Sanity check (deps & glibc ceiling)
@@ -47,8 +48,29 @@ jobs:
             objdump -T build/bin/snake-game | grep -o "GLIBC_[0-9.]*" | sort -uV | tail -1
           '
 
+      - name: Verify deb package (install / files / remove)
+        run: |
+          docker run --rm -v "$PWD":/src -w /src ubuntu:20.04 bash -euxc '
+            apt-get update
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+              libwebkit2gtk-4.0-37 libgtk-3-0
+            dpkg-deb --info wails-snake_ci_amd64.deb
+            dpkg -i wails-snake_ci_amd64.deb
+            dpkg -s wails-snake | grep "Status: install ok installed"
+            test -x /opt/wails-snake/snake-game
+            test -f /usr/share/applications/wails-snake.desktop
+            test -f /usr/share/icons/hicolor/512x512/apps/wails-snake.png
+            ldd /opt/wails-snake/snake-game | grep -q libwebkit2gtk-4.0
+            dpkg -r wails-snake
+            test ! -e /opt/wails-snake/snake-game
+            test ! -e /usr/share/applications/wails-snake.desktop
+            echo "deb 安装/卸载验证通过"
+          '
+
       - uses: actions/upload-artifact@v4
         with:
           name: snake-game-linux-amd64-ci
-          path: build/bin/snake-game
+          path: |
+            build/bin/snake-game
+            wails-snake_ci_amd64.deb
           if-no-files-found: error

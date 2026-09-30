@@ -1,0 +1,4 @@
+Copyright © 2026 Yurbin
+
+贪吃蛇(wails-snake)— Go + Wails v2,面向银河麒麟桌面版 V10 SP1。
+运行依赖:libwebkit2gtk-4.0-37、libgtk-3-0(由包管理器自动安装)。

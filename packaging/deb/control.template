@@ -1,0 +1,11 @@
+Package: wails-snake
+Version: __VERSION__
+Section: games
+Priority: optional
+Architecture: amd64
+Depends: libwebkit2gtk-4.0-37, libgtk-3-0
+Maintainer: Yurbin <yurbin@users.noreply.github.com>
+Description: 贪吃蛇桌面游戏 (Snake)
+ Go + Wails 贪吃蛇,面向银河麒麟桌面版 V10 SP1(x86_64)。
+ 三难度、穿墙模式、WebAudio 音效、三套主题;运行全程不联网。
+ 安装后自动出现在开始菜单;卸载:sudo apt remove wails-snake。

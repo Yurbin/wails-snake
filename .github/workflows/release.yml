@@ -52,6 +52,7 @@ jobs:
                 exit 1
               fi
               echo "glibc ceiling OK"
+              ./scripts/build-deb.sh "${VERSION}"
             '
 
       - name: Assemble portable bundle
@@ -68,12 +69,20 @@ jobs:
           sha256sum "${NAME}_portable.tar.gz" > "${NAME}_portable.tar.gz.sha256"
           cat "${NAME}_portable.tar.gz.sha256"
 
+      - name: Checksum deb package
+        run: |
+          sha256sum "wails-snake_${{ steps.ver.outputs.version }}_amd64.deb" \
+            > "wails-snake_${{ steps.ver.outputs.version }}_amd64.deb.sha256"
+          cat wails-snake_*_amd64.deb.sha256
+
       - uses: actions/upload-artifact@v4
         with:
           name: portable-linux-amd64
           path: |
             wails-snake_*_linux_amd64_portable.tar.gz
             wails-snake_*_linux_amd64_portable.tar.gz.sha256
+            wails-snake_*_amd64.deb
+            wails-snake_*_amd64.deb.sha256
           if-no-files-found: error
 
   release:
@@ -92,4 +101,6 @@ jobs:
           files: |
             wails-snake_*_linux_amd64_portable.tar.gz
             wails-snake_*_linux_amd64_portable.tar.gz.sha256
+            wails-snake_*_amd64.deb
+            wails-snake_*_amd64.deb.sha256
           generate_release_notes: true

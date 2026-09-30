@@ -1,6 +1,6 @@
-# 贪吃蛇 · Wails · 麒麟 V10 SP1 便携版
+# 贪吃蛇 · Wails · 麒麟 V10 SP1
 
-Go + [Wails v2](https://v2.wails.io) 制作的桌面端贪吃蛇游戏,面向**银河麒麟桌面操作系统 V10 SP1(x86_64)**,交付形态为**绿色免安装便携包**。由 GitHub Actions 在 `ubuntu:20.04` 容器内构建,保证产物与麒麟的 glibc 2.31 / webkit2gtk-4.0 ABI 兼容。
+Go + [Wails v2](https://v2.wails.io) 制作的桌面端贪吃蛇游戏,面向**银河麒麟桌面操作系统 V10 SP1(x86_64)**,提供两种交付形态:**绿色免安装便携包**(tar.gz)与 **deb 安装包**。由 GitHub Actions 在 `ubuntu:20.04` 容器内构建,保证产物与麒麟的 glibc 2.31 / webkit2gtk-4.0 ABI 兼容。
 
 - 运行时**零联网**,适合内网环境
 - 最高分持久化到 `~/.config/wails-snake/scores.json`
@@ -16,8 +16,8 @@ Go + [Wails v2](https://v2.wails.io) 制作的桌面端贪吃蛇游戏,面向**�
 | 音效 | WebAudio 合成(吃食 / 提速 / 死亡),可静音 |
 | 主题 | 经典 / 暗夜 / 霓虹 三套配色 |
 | 操作 | 方向键 / WASD 移动,空格 / P 暂停,Enter 开始/重开;窗口失焦自动暂停 |
-| 开始菜单 | 首次运行自动集成(freedesktop `.desktop` + hicolor 图标,UKUI 兼容);程序目录移动后自动自愈 |
-| 卸载 | 开始菜单点「卸载贪吃蛇」或终端 `snake-game --uninstall`;彻底删除 = 卸载后删除程序目录 |
+| 开始菜单 | 首次运行自动集成(freedesktop `.desktop` + hicolor 图标,UKUI 兼容);程序目录移动后自动自愈;deb 安装时由包提供系统级菜单项,程序不再重复写入 |
+| 卸载 | 便携版:开始菜单点「卸载贪吃蛇」或终端 `snake-game --uninstall`;deb 版:`sudo apt remove wails-snake` |
 
 ## 本地开发(macOS / Linux)
 
@@ -35,8 +35,8 @@ Linux 本机构建需要 `libgtk-3-dev libwebkit2gtk-4.0-dev pkg-config`。
 
 | Workflow | 触发 | 内容 |
 |---|---|---|
-| [ci.yml](.github/workflows/ci.yml) | push / PR | ubuntu:20.04 容器内构建 linux/amd64 冒烟,校验 ldd 与 glibc 符号上限 |
-| [release.yml](.github/workflows/release.yml) | 推 tag `v*` | 同一容器构建并注入版本号,组装便携 tar.gz + sha256,挂到 GitHub Release |
+| [ci.yml](.github/workflows/ci.yml) | push / PR | ubuntu:20.04 容器内构建 linux/amd64 冒烟,校验 ldd 与 glibc 符号上限;构建 deb 并在干净容器里真实 `dpkg -i` → 校验文件 → `dpkg -r` 闭环验证 |
+| [release.yml](.github/workflows/release.yml) | 推 tag `v*` | 同一容器构建并注入版本号,组装便携 tar.gz 与 deb 安装包(各带 sha256),挂到 GitHub Release |
 
 发一版新版本:
 
@@ -45,6 +45,10 @@ git tag v0.1.0 && git push origin v0.1.0
 ```
 
 ## 麒麟 V10 SP1 部署(内网)
+
+Release 提供两种产物,按需选用:
+
+### 方式一:绿色便携包(免安装,推荐单人使用)
 
 1. 外网下载 Release 中的 `wails-snake_<版本>_linux_amd64_portable.tar.gz` 与 `.sha256`,摆渡进内网
 2. 目标机解压到任意目录,校验完整性:
@@ -62,6 +66,21 @@ git tag v0.1.0 && git push origin v0.1.0
 ```bash
 ./snake-game --uninstall
 ```
+
+### 方式二:deb 安装包(系统级安装,适合统一部署)
+
+1. 外网下载 `wails-snake_<版本>_amd64.deb` 与 `.sha256`,摆渡进内网并校验
+2. 安装(依赖会从软件源自动解析):
+   ```bash
+   sudo apt install ./wails-snake_<版本>_amd64.deb
+   ```
+3. 安装后即出现在开始菜单(程序位于 `/opt/wails-snake/`),桌面任意用户可启动
+4. 卸载:
+   ```bash
+   sudo apt remove wails-snake
+   ```
+
+两种方式都可以用,但**不要同时安装**;若 deb 安装后又运行了便携版,便携版会检测到系统级菜单项并自动跳过用户级集成,不会产生重复菜单。
 
 依赖(麒麟 V10 SP1 桌面版软件源均有,缺失时从内网源安装):
 
@@ -81,10 +100,12 @@ sudo apt install libwebkit2gtk-4.0-37 libgtk-3-0
 ```
 main.go               # Wails 入口、窗口配置、Linux 窗口图标/WMClass、--uninstall 参数
 app.go                # 最高分持久化(JSON)、版本信息(前端绑定)
-desktop.go            # 开始菜单集成:.desktop 生成、图标安装、卸载(含单元测试)
+desktop.go            # 开始菜单集成:.desktop 生成、图标安装、卸载、deb 系统级检测(含单元测试)
 frontend/dist/        # 原生 HTML/CSS/JS,直接嵌入二进制
   js/game.js          # 引擎:状态机、固定步长循环、碰撞、Canvas 渲染
   js/main.js          # UI 胶水:菜单/HUD/输入、Wails 绑定
 scripts/check-deps.sh # 目标机依赖断言检测
+scripts/build-deb.sh  # deb 安装包组装(二进制 + 菜单项 + 图标 → dpkg-deb)
+packaging/deb/        # deb 元数据:control 模板、postinst、系统级 .desktop
 .github/workflows/    # ci.yml / release.yml
 ```

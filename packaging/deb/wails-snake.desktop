@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=贪吃蛇
+Name[en]=Snake
+GenericName=贪吃蛇桌面游戏
+Comment=Go + Wails 贪吃蛇 · 麒麟 V10 SP1
+Exec=/opt/wails-snake/snake-game
+Icon=wails-snake
+Terminal=false
+Categories=Game;ArcadeGame;
+StartupNotify=true
+StartupWMClass=wails-snake

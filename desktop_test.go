@@ -32,6 +32,16 @@ func TestUninstallDesktopEntry(t *testing.T) {
 	}
 }
 
+func TestSystemDesktopFile(t *testing.T) {
+	if got := systemDesktopFile(); got != "/usr/share/applications/"+appID+".desktop" {
+		t.Errorf("系统级菜单项路径 = %q", got)
+	}
+	// 开发机/CI 干净环境下不应误判为 deb 安装
+	if systemInstalled() {
+		t.Log("注意: 检测到系统级安装(本机若装过 deb 包则正常)")
+	}
+}
+
 func TestInstallAndRemoveMenuEntries(t *testing.T) {
 	home := t.TempDir()
 	execPath := filepath.Join(home, "apps", "snake-game")

@@ -29,6 +29,17 @@ func iconInstallPath(home string) string {
 	return filepath.Join(home, ".local", "share", "icons", "hicolor", "512x512", "apps", appID+".png")
 }
 
+// systemDesktopFile 系统级安装(deb 包)的菜单项路径
+func systemDesktopFile() string {
+	return "/usr/share/applications/" + appID + ".desktop"
+}
+
+// systemInstalled 报告本程序是否经包管理器(deb)安装在系统级
+func systemInstalled() bool {
+	_, err := os.Stat(systemDesktopFile())
+	return err == nil
+}
+
 // ---------- .desktop 内容(freedesktop 规范,UKUI 开始菜单兼容) ----------
 
 func gameDesktopEntry(execPath string) string {
@@ -119,6 +130,9 @@ func runMenuInstall() {
 	if runtime.GOOS != "linux" {
 		return
 	}
+	if systemInstalled() {
+		return // deb 安装已带系统级菜单项,跳过用户级安装避免菜单重复
+	}
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return
@@ -132,6 +146,11 @@ func runMenuInstall() {
 
 // runMenuUninstall 卸载开始菜单集成,返回进程退出码
 func runMenuUninstall() int {
+	if systemInstalled() {
+		fmt.Println("检测到本程序为系统级安装(deb 包)。")
+		fmt.Println("请使用包管理器卸载: sudo apt remove wails-snake")
+		return 0
+	}
 	home, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println("无法确定用户目录:", err)
