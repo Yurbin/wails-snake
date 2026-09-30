@@ -38,6 +38,7 @@ jobs:
               tar -C /usr/local -xzf /tmp/go.tgz
               export PATH=/usr/local/go/bin:/root/go/bin:$PATH
               go install "github.com/wailsapp/wails/v2/cmd/wails@${WAILS_VERSION}"
+              go test ./...
               wails build -platform linux/amd64 \
                 -ldflags "-s -w -X main.version=${VERSION}"
               echo "== linked libraries =="
@@ -60,6 +61,7 @@ jobs:
           STAGE="dist-portable/${NAME}"
           mkdir -p "${STAGE}"
           cp build/bin/snake-game "${STAGE}/"
+          cp build/appicon.png "${STAGE}/"
           cp scripts/check-deps.sh "${STAGE}/"
           cp scripts/启动说明.txt "${STAGE}/"
           tar -czf "${NAME}_portable.tar.gz" -C dist-portable "${NAME}"

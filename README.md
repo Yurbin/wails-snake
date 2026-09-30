@@ -16,6 +16,8 @@ Go + [Wails v2](https://v2.wails.io) 制作的桌面端贪吃蛇游戏,面向**�
 | 音效 | WebAudio 合成(吃食 / 提速 / 死亡),可静音 |
 | 主题 | 经典 / 暗夜 / 霓虹 三套配色 |
 | 操作 | 方向键 / WASD 移动,空格 / P 暂停,Enter 开始/重开;窗口失焦自动暂停 |
+| 开始菜单 | 首次运行自动集成(freedesktop `.desktop` + hicolor 图标,UKUI 兼容);程序目录移动后自动自愈 |
+| 卸载 | 开始菜单点「卸载贪吃蛇」或终端 `snake-game --uninstall`;彻底删除 = 卸载后删除程序目录 |
 
 ## 本地开发(macOS / Linux)
 
@@ -55,6 +57,12 @@ git tag v0.1.0 && git push origin v0.1.0
    ```
 4. 启动:`./snake-game`(或桌面双击)
 
+首次运行自动加入开始菜单(含「卸载贪吃蛇」入口);卸载菜单集成:
+
+```bash
+./snake-game --uninstall
+```
+
 依赖(麒麟 V10 SP1 桌面版软件源均有,缺失时从内网源安装):
 
 ```bash
@@ -71,8 +79,9 @@ sudo apt install libwebkit2gtk-4.0-37 libgtk-3-0
 ## 项目结构
 
 ```
-main.go               # Wails 入口、窗口配置
+main.go               # Wails 入口、窗口配置、Linux 窗口图标/WMClass、--uninstall 参数
 app.go                # 最高分持久化(JSON)、版本信息(前端绑定)
+desktop.go            # 开始菜单集成:.desktop 生成、图标安装、卸载(含单元测试)
 frontend/dist/        # 原生 HTML/CSS/JS,直接嵌入二进制
   js/game.js          # 引擎:状态机、固定步长循环、碰撞、Canvas 渲染
   js/main.js          # UI 胶水:菜单/HUD/输入、Wails 绑定

@@ -32,6 +32,7 @@ jobs:
               tar -C /usr/local -xzf /tmp/go.tgz
               export PATH=/usr/local/go/bin:/root/go/bin:$PATH
               go install "github.com/wailsapp/wails/v2/cmd/wails@${WAILS_VERSION}"
+              go test ./...
               wails build -platform linux/amd64 -ldflags "-s -w -X main.version=ci"
             '
 

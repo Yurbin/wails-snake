@@ -2,10 +2,12 @@ package main
 
 import (
 	"embed"
+	"os"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 )
 
 //go:embed all:frontend/dist
@@ -21,6 +23,17 @@ const (
 )
 
 func main() {
+	// 命令行模式:卸载 / 帮助(不开窗口)
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "--uninstall", "-u":
+			os.Exit(runMenuUninstall())
+		case "--help", "-h":
+			printUsage()
+			return
+		}
+	}
+
 	app := NewApp()
 
 	err := wails.Run(&options.App{
@@ -34,6 +47,10 @@ func main() {
 		AssetServer:      &assetserver.Options{Assets: assets},
 		OnStartup:        app.startup,
 		Bind:             []interface{}{app},
+		Linux: &linux.Options{
+			Icon:        appIconPNG, // 窗口/任务栏图标
+			ProgramName: appID,      // 与 .desktop 的 StartupWMClass 对应,保证任务栏分组正确
+		},
 	})
 	if err != nil {
 		println("Error:", err.Error())

@@ -26,6 +26,8 @@ func (a *App) startup(ctx context.Context) {
 	if dir, err := os.UserConfigDir(); err == nil {
 		a.scoresPath = filepath.Join(dir, "wails-snake", "scores.json")
 	}
+	// 集成开始菜单(Linux;幂等,失败不影响游戏)
+	runMenuInstall()
 }
 
 // LoadScores 读取历史最高分表;文件不存在或损坏时返回空表
